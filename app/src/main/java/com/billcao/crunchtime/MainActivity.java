@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String exerciseString = String.valueOf(parent.getItemAtPosition(position));
                 String exercisePicked = "You selected " + exerciseString;
-                String duration = exerciseString.replaceAll("\\D+","");
+                String[] exerciseStringArray = exerciseString.split(" ");
+                String duration = exerciseStringArray[exerciseStringArray.length - 2];
                 exercisesView.setText(exercises[position]);
                 numRepsView.setText(duration);
                 Toast.makeText(MainActivity.this, exercisePicked, Toast.LENGTH_SHORT).show();
@@ -90,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
 
                     caloriesBurnedMessage.setText("You have burned " + df.format(calorieDisplay) + " calories - good job!");
                     exerciseMessage.setText("Which is equivalent to:");
-                    
+
                     HashMap<String, Double> convertedExercises = Exercise.convertExercise(exercise, numRepsOrMinutes);
 
                     for (int i = 0; i < exerciseArrayList.size(); i++) {
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                     if (!Arrays.asList(exercises).contains(exercise)) {
                         Toast.makeText(MainActivity.this, "Unsupported exercise, please choose one from the list", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "How many minutes/reps, champ?", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Invalid minutes/reps, champ", Toast.LENGTH_SHORT).show();
                     }
 
                 }
