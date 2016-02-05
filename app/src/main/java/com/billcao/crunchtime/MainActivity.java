@@ -5,21 +5,25 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
-import com.billcao.crunchtime.Exercise;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -39,36 +43,71 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        final DecimalFormat df = new DecimalFormat("#.##");
+        df.setRoundingMode(RoundingMode.CEILING);
+
+        final AutoCompleteTextView exercisesView = (AutoCompleteTextView) findViewById(R.id.exercise_type);
+        final String[] exercises = Exercise.exerciseFactors.keySet().toArray(new String[Exercise.exerciseFactors.keySet().size()]);
+        Arrays.sort(exercises);
+        final ArrayAdapter<String> exercisesAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, exercises);
+        exercisesView.setAdapter(exercisesAdapter);
         final TextView caloriesBurnedMessage = (TextView) findViewById(R.id.calories_burned);
 
-        String[] exercises = {"Pushup", "Situp"};
-        ListAdapter theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, exercises);
-        ListView exerciseList = (ListView) findViewById(R.id.exercise_list);
+        final ArrayList<String> exerciseArrayList = new ArrayList<String>(Exercise.exerciseFactors.keySet());
+        Collections.sort(exerciseArrayList);
+        final ArrayAdapter<String> theAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, exerciseArrayList);
+        final ListView exerciseList = (ListView) findViewById(R.id.exercise_list);
         exerciseList.setAdapter(theAdapter);
-
+        final TextView exerciseMessage = (TextView) findViewById(R.id.exerciseMessage);
+        Button convertButton = (Button) findViewById(R.id.convert_button);
+        final EditText numRepsView = (EditText) findViewById(R.id.number_reps);
         exerciseList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String exercisePicked = "You selected " + String.valueOf(parent.getItemAtPosition(position));
+                String exerciseString = String.valueOf(parent.getItemAtPosition(position));
+                String exercisePicked = "You selected " + exerciseString;
+                String duration = exerciseString.replaceAll("\\D+","");
+                exercisesView.setText(exercises[position]);
+                numRepsView.setText(duration);
                 Toast.makeText(MainActivity.this, exercisePicked, Toast.LENGTH_SHORT).show();
             }
         });
 
 
-        final TextView numReps = (TextView) findViewById(R.id.textView);
-        Button convertButton = (Button) findViewById(R.id.convert_button);
-
         convertButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                numReps.setText("Button clicked");
-                String exercise = findViewById(R.id.exercise_type).toString().toLowerCase();
-                EditText numRepsView = (EditText) findViewById(R.id.number_reps);
-                Log.e("numRepsView", numRepsView.toString());
-                double numRepsOrMinutes = Double.parseDouble(numRepsView.toString());
-                double calorieDisplay = Exercise.caloriesBurned(exercise, numRepsOrMinutes);
+                // Reset exerciseArrayList
+                for (int i = 0; i < exercises.length; i++) {
+                    String e = exercises[i];
+                    exerciseArrayList.set(i, e);
+                }
 
-                caloriesBurnedMessage.setText("You have burned " + calorieDisplay + " calories");
+                String exercise = exercisesView.getText().toString().toLowerCase();
+                try {
+                    double numRepsOrMinutes = Double.parseDouble(numRepsView.getText().toString());
+                    double calorieDisplay = Exercise.caloriesBurned(exercise, numRepsOrMinutes);
+
+                    caloriesBurnedMessage.setText("You have burned " + df.format(calorieDisplay) + " calories - good job!");
+                    exerciseMessage.setText("Which is equivalent to:");
+                    
+                    HashMap<String, Double> convertedExercises = Exercise.convertExercise(exercise, numRepsOrMinutes);
+
+                    for (int i = 0; i < exerciseArrayList.size(); i++) {
+                        String e = exerciseArrayList.get(i);
+                        exerciseArrayList.set(i, capitalize(e) + " for " + df.format(convertedExercises.get(e)) + " " + Exercise.exerciseLabels.get(e));
+                    }
+
+                    theAdapter.notifyDataSetChanged();
+                } catch (Exception e) {
+                    if (!Arrays.asList(exercises).contains(exercise)) {
+                        Toast.makeText(MainActivity.this, "Unsupported exercise, please choose one from the list", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(MainActivity.this, "How many minutes/reps, champ?", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+
             }
         });
     }
@@ -95,4 +134,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private String capitalize(final String line) {
+        return Character.toUpperCase(line.charAt(0)) + line.substring(1);
+    }
 }

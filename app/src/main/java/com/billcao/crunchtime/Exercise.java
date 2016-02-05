@@ -1,7 +1,6 @@
 package com.billcao.crunchtime;
 
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,11 +26,30 @@ public class Exercise {
         }
     };
 
+    public static HashMap<String, String> exerciseLabels = new HashMap<String, String>() {
+        {
+            put("pushup", "Reps");
+            put("situp", "Reps");
+            put("squats", "Reps");
+            put("leg-lift", "Minutes");
+            put("plank", "Minutes");
+            put("jumping jacks", "Minutes");
+            put("pullup", "Reps");
+            put("cycling", "Minutes");
+            put("walking", "Minutes");
+            put("jogging", "Minutes");
+            put("swimming", "Minutes");
+            put("stair-climbing", "Minutes");
+        }
+    };
+
+    // TODO: Fix divide by 0 issues
     public static double caloriesBurned(String exercise, double repsOrMinutes) {
         double caloriesBurned = (repsOrMinutes / exerciseFactors.get(exercise)) * 100;
         return caloriesBurned;
     }
 
+    // TODO: Fix divide by 0 issues
     public static HashMap<String, Double> convertExercise(String exercise, double repsOrMinutes) {
         HashMap<String, Double> convertedExercises = new HashMap<String, Double>();
         Set exerciseSet = exerciseFactors.entrySet();
@@ -43,7 +61,6 @@ public class Exercise {
             double conversionFactor = repsOrMinutes / exerciseFactors.get(exercise);
             double equivalentRepsOrMinutes = conversionFactor * exerciseValue;
 
-            // TODO: Don't add in if exerciseKey == exercise
             convertedExercises.put(exerciseKey, equivalentRepsOrMinutes);
         }
 
