@@ -67,9 +67,13 @@ public class MainActivity extends AppCompatActivity {
                 String exerciseString = String.valueOf(parent.getItemAtPosition(position));
                 String exercisePicked = "You selected " + exerciseString;
                 String[] exerciseStringArray = exerciseString.split(" ");
-                String duration = exerciseStringArray[exerciseStringArray.length - 2];
+                if (exerciseStringArray.length > 2) {
+                    String duration = exerciseStringArray[exerciseStringArray.length - 2];
+                    numRepsView.setText(duration);
+                }
+
                 exercisesView.setText(exercises[position]);
-                numRepsView.setText(duration);
+
                 Toast.makeText(MainActivity.this, exercisePicked, Toast.LENGTH_SHORT).show();
             }
         });
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
                     double numRepsOrMinutes = Double.parseDouble(numRepsView.getText().toString());
                     double calorieDisplay = Exercise.caloriesBurned(exercise, numRepsOrMinutes);
 
-                    caloriesBurnedMessage.setText("You have burned " + df.format(calorieDisplay) + " calories - good job!");
+                    caloriesBurnedMessage.setText("You have burned " + df.format(calorieDisplay) + " calories, or " + df.format(calorieDisplay/154) + " beers!");
                     exerciseMessage.setText("Which is equivalent to:");
 
                     HashMap<String, Double> convertedExercises = Exercise.convertExercise(exercise, numRepsOrMinutes);

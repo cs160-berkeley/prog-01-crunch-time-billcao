@@ -1,6 +1,6 @@
-# PROG 01: Crunch Time
+# PROG 01: Beer Belly Buster (aka Crunch Time)
 
-Briefly describe your app here.
+Beer Belly Buster helps you, the data-driven user, track and optimize your workouts. Simply select a type of exercise, input in the number of minutes or repetitions, and calculate how many calories (or beers) are burned! Plus you get a list of equivalent exercises and their durations. Tracking how many calories you've worked off just got that much easier.
 
 ## Authors
 
