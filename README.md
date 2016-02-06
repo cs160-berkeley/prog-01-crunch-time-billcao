@@ -8,7 +8,7 @@ Bill Cao ([billcao@berkeley.edu](mailto:billcao@berkeley.edu))
 
 ## Demo Video
 
-See [your demo video title here] (https://link_to_your_video)
+See [Beer Belly Buster] (https://www.youtube.com/watch?v=y8rlI2JbcAc)
 
 ## Acknowledgments
 
